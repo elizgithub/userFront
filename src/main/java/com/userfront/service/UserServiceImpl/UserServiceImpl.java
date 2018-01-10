@@ -4,20 +4,27 @@ import java.util.List;
 import java.util.Set;
 
 import com.userfront.dao.RoleDao;
+import com.userfront.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.userfront.dao.UserDao;
-import com.userfront.domain.User;
-import com.userfront.domain.security.UserRole;
+import com.userfront.model.User;
+import com.userfront.model.security.UserRole;
 import com.userfront.service.UserService;
 
+@Transactional //uses hibernate and spring it creates unit of works like multiple DB
+//transactions and all trnsactions have to be successfull like all-or-noting
+//if one db transaction fails it will roleback all db operations noting will be persisited
+//Good for data integrity or consistancy
 @Service
-@Transactional
 public class UserServiceImpl implements UserService{
 	
 	private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
@@ -30,7 +37,35 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
+    @Autowired
+    private AccountService accountService;
+
+    public User createUser (User user, Set <UserRole> userRoles)
+    {
+        User localUser = userDao.findByUsername(user.getUsername());
+
+        if(localUser!=null)
+        {
+            LOG.info("User with username {} already exists ",user.getUsername());
+        }
+
+        else {
+            String encryptedPasswird = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptedPasswird);//set encrypted password
+
+
+            for (UserRole ur : userRoles) {
+                    roleDao.save(ur.getRole());
+            }
+            user.getUserRoles().addAll(userRoles);
+            user.setPrimaryAccount(accountService.createPrimaryAccount());
+            user.setSavingsAccount(accountService.createSavingsAccount());
+
+            localUser= userDao.save(user);
+        }
+        return localUser;
+    }
 
 	public void save(User user) {
         userDao.save(user);

@@ -1,4 +1,4 @@
-package com.userfront.domain;
+package com.userfront.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

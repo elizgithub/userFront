@@ -1,4 +1,4 @@
-package com.userfront.domain;
+package com.userfront.model;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -16,8 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.userfront.domain.security.Authority;
-import com.userfront.domain.security.UserRole;
+import com.userfront.model.security.Authority;
+import com.userfront.model.security.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

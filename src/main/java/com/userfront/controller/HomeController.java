@@ -1,10 +1,9 @@
 package com.userfront.controller;
 
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.userfront.dao.RoleDao;
+import com.userfront.model.PrimaryAccount;
+import com.userfront.model.SavingsAccount;
+import com.userfront.model.security.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,11 +11,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.userfront.domain.PrimaryAccount;
-import com.userfront.domain.SavingsAccount;
-import com.userfront.domain.User;
-import com.userfront.domain.security.UserRole;
+import com.userfront.model.User;
 import com.userfront.service.UserService;
+
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class HomeController {
@@ -49,6 +49,7 @@ public class HomeController {
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String signupPost(@ModelAttribute("user") User user,  Model model) {
 
+	    System.out.println(user.toString());
         if(userService.checkUserExists(user.getUsername(), user.getEmail()))  {
 
             if (userService.checkEmailExists(user.getEmail())) {
@@ -60,22 +61,29 @@ public class HomeController {
             }
 
             return "signup";
-        } else {
-
-                    userService.save(user);
-            return "redirect:/";
+        }
+            else {
+                    Set<UserRole> userRoles = new HashSet<>();
+                    userRoles.add(new UserRole(user, roleDao.findByName("ROLE_USER")));
+                    userService.createUser(user,userRoles);
+                    return "redirect:/";
         }
     }
-	
-//	@RequestMapping("/userFront")
-//	public String userFront(Principal principal, Model model) {
-//        User user = userService.findByUsername(principal.getName());
-//        PrimaryAccount primaryAccount = user.getPrimaryAccount();
-//        SavingsAccount savingsAccount = user.getSavingsAccount();
-//
-//        model.addAttribute("primaryAccount", primaryAccount);
-//        model.addAttribute("savingsAccount", savingsAccount);
-//
-//        return "userFront";
-//    }
+
+
+
+
+	@RequestMapping("/userFront") //the security config is the one who is mapping this userFront page after login is true
+	public String userFront(Principal principal, Model model)
+    //principal is user who logged in in spring security like session
+    {
+        User user = userService.findByUsername(principal.getName()); //it gets who loged in
+        PrimaryAccount primaryAccount = user.getPrimaryAccount();
+        SavingsAccount savingsAccount = user.getSavingsAccount();
+
+        model.addAttribute("primaryAccount", primaryAccount);
+        model.addAttribute("savingsAccount", savingsAccount);
+
+        return "userFront";
+    }
 }

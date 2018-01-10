@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.userfront.domain.User;
+import com.userfront.model.User;
 
 public interface UserDao extends CrudRepository<User, Long> {
 	User findByUsername(String username);

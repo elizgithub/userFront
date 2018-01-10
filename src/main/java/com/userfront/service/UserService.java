@@ -3,8 +3,9 @@ package com.userfront.service;
 import java.util.List;
 import java.util.Set;
 
-import com.userfront.domain.User;
-import com.userfront.domain.security.UserRole;
+import com.userfront.model.User;
+import com.userfront.model.security.UserRole;
+import org.springframework.stereotype.Service;
 
 public interface UserService {
 	User findByUsername(String username);
@@ -19,13 +20,7 @@ public interface UserService {
     
     void save (User user);
     
-//    User createUser(User user, Set<UserRole> userRoles);
+    User createUser(User user, Set<UserRole> userRoles);
     
-    User saveUser (User user); 
-    
-    List<User> findUserList();
 
-//    void enableUser (String username);
-//
-//    void disableUser (String username);
 }

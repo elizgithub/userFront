@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.userfront.dao.UserDao;
-import com.userfront.domain.User;
+import com.userfront.model.User;
 
 @Service
 public class UserSecurityService implements UserDetailsService {

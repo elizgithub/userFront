@@ -1,6 +1,6 @@
-package com.userfront.domain.security;
+package com.userfront.model.security;
 
-import com.userfront.domain.User;
+import com.userfront.model.User;
 
 import javax.persistence.*;
 
