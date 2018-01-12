@@ -1,10 +1,9 @@
 package com.userfront.controller;
 
 
-import com.userfront.model.PrimaryAccount;
-import com.userfront.model.SavingsAccount;
-import com.userfront.model.User;
+import com.userfront.model.*;
 import com.userfront.service.AccountService;
+import com.userfront.service.TransactionService;
 import com.userfront.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/account")
@@ -25,22 +25,29 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @RequestMapping("/primaryAccount")
+    @Autowired
+    private TransactionService transactionService;
+
+    @RequestMapping("/primaryAccount") //the primary account page
     private String PrimaryAccount(Model model, Principal principal)
     {
+
+        List<PrimaryTransaction> primaryTransactionList = transactionService.findPrimaryTransactionList(principal.getName());
         User user = userService.findByUsername(principal.getName());//finds the user loged in from dbtabase by using the user loged in
         PrimaryAccount primaryAccount = user.getPrimaryAccount();//primary account binded to user;
         model.addAttribute("primaryAccount",primaryAccount);//mapped to the view
+        model.addAttribute("primaryTransactionList",primaryTransactionList);//The List of transaction list mapped to the view for the table
         return "primaryAccount";
     }
 
-    @RequestMapping("/savingsAccount")
+    @RequestMapping("/savingsAccount") // the savings account page
     private String SavingsAccount(Model model, Principal principal)
     {
+        List<SavingsTransaction> savingsTransactionList = transactionService.findSavingsTransactionList(principal.getName());
         User user = userService.findByUsername(principal.getName());
         SavingsAccount savingsAccount = user.getSavingsAccount();
         model.addAttribute("savingsAccount",savingsAccount);
-
+        model.addAttribute("savingsTransactionList",savingsTransactionList);
         return "savingsAccount";
     }
 
