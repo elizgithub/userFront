@@ -3,6 +3,7 @@ package com.userfront.controller;
 import com.userfront.model.PrimaryAccount;
 import com.userfront.model.SavingsAccount;
 import com.userfront.model.User;
+import com.userfront.service.AccountService;
 import com.userfront.service.TransactionService;
 import com.userfront.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class TransferController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AccountService accountService;
+
     @RequestMapping(value = "/betweenAccounts",method = RequestMethod.GET)
     public String betweenAccounts(Model model){
 
@@ -40,7 +44,7 @@ public class TransferController {
     @RequestMapping(value = "/betweenAccounts",method = RequestMethod.POST)
     public String betweenAccountsPost(
             @ModelAttribute("transferFrom") String transferFrom,//from the html to the attributes
-            @ModelAttribute("tansferTo") String transferTo,
+            @ModelAttribute("transferTo") String transferTo,
             @ModelAttribute("amount") String amount,
             Principal principal
             )throws Exception{
@@ -49,7 +53,8 @@ public class TransferController {
         PrimaryAccount primaryAccount = user.getPrimaryAccount();
         SavingsAccount savingsAccount = user.getSavingsAccount();
 
-        transactionService.betweenAccountsTransfer(transferFrom,transferTo,amount,primaryAccount,savingsAccount);
+        System.out.println("errorfrom "+transferFrom+" "+transferTo+ " " +amount);
+        transactionService.betweenAccountsTransfer(transferFrom,transferTo,Double.parseDouble(amount),primaryAccount,savingsAccount);
 
         return "redirect:/userFront";
     }

@@ -70,20 +70,20 @@ public class TransactionServiceImpl implements TransactionService{
         savingsTransactionDao.save(savingsTransaction);
     }
 
-    public void betweenAccountsTransfer(String from, String to, String amount, PrimaryAccount primaryAccount, SavingsAccount savingsAccount){
+    public void betweenAccountsTransfer(String from, String to, double amount, PrimaryAccount primaryAccount, SavingsAccount savingsAccount){
 
-        if (from.equalsIgnoreCase("PrimaryAccount") && to.equalsIgnoreCase("SavingsAccount")){
+        if (from.equalsIgnoreCase("Primary") && to.equalsIgnoreCase("Savings")){
             primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
             savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().add(new BigDecimal(amount)));
             primaryAccountDao.save(primaryAccount);
             savingsAccountDao.save(savingsAccount);
 
             Date date = new Date();
-            PrimaryTransaction primaryTransaction = new PrimaryTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",Double.parseDouble(amount),primaryAccount.getAccountBalance(),primaryAccount);
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",amount,primaryAccount.getAccountBalance(),primaryAccount);
 
             primaryTransactionDao.save(primaryTransaction);
         }
-        else if (from.equalsIgnoreCase("SavingsAccount") && to.equalsIgnoreCase("PrimaryAccount")){
+        else if (from.equalsIgnoreCase("Savings") && to.equalsIgnoreCase("Primary")){
 
             savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().subtract(new BigDecimal(amount)));
             primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().add(new BigDecimal(amount)));
@@ -92,10 +92,19 @@ public class TransactionServiceImpl implements TransactionService{
 
             Date date = new Date();
 
-            SavingsTransaction savingsTransaction = new SavingsTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",Double.parseDouble(amount),primaryAccount.getAccountBalance(),savingsAccount);
+            SavingsTransaction savingsTransaction = new SavingsTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",amount,primaryAccount.getAccountBalance(),savingsAccount);
 
             savingsTransactionDao.save(savingsTransaction);
         }
+        else {
+            try {
+                throw new Exception("error");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
 }
