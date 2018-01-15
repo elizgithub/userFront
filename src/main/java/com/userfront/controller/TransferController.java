@@ -1,8 +1,10 @@
 package com.userfront.controller;
 
 import com.userfront.model.PrimaryAccount;
+import com.userfront.model.Recipient;
 import com.userfront.model.SavingsAccount;
 import com.userfront.model.User;
+import com.userfront.service.AccountService;
 import com.userfront.service.TransactionService;
 import com.userfront.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.jnlp.UnavailableServiceException;
 import java.awt.event.MouseEvent;
 import java.rmi.MarshalledObject;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/transfer")
@@ -26,6 +31,9 @@ public class TransferController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AccountService accountService;
 
     @RequestMapping(value = "/betweenAccounts",method = RequestMethod.GET)
     public String betweenAccounts(Model model){
@@ -48,9 +56,50 @@ public class TransferController {
         PrimaryAccount primaryAccount = user.getPrimaryAccount();
         SavingsAccount savingsAccount = user.getSavingsAccount();
 
-        System.out.println("Transfer "+transferFrom+" "+transferTo+" "+amount);
-        transactionService.betweenAccountsTransfer(transferFrom,transferTo,amount,primaryAccount,savingsAccount);
+        System.out.println("errorfrom "+transferFrom+" "+transferTo+ " " +amount);
+        transactionService.betweenAccountsTransfer(transferFrom,transferTo,Double.parseDouble(amount),primaryAccount,savingsAccount);
 
         return "redirect:/userFront";
+    }
+
+    @RequestMapping(value = "/recipient",method = RequestMethod.GET) //just display the page of recipients
+    public String recipient(Model model , Principal principal){
+        Recipient recipient = new Recipient();
+        List<Recipient> recipientList = transactionService.findAllRecipientList(principal);
+        model.addAttribute("recipientList",recipientList);
+        model.addAttribute("recipient",recipient);
+
+        return "recipient";
+    }
+
+    @RequestMapping(value = "/recipient/save", method = RequestMethod.POST) //to save the recipient list
+    public String saveRecipient(@ModelAttribute("recipient") Recipient recipient,Principal principal){
+
+        User user = userService.findByUsername(principal.getName());
+        recipient.setUser(user);
+        transactionService.setRecipient(recipient);
+        return "recipient";
+    }
+
+    @RequestMapping(value = "/recipient/edit" , method = RequestMethod.GET)
+    public String editRecipient(@RequestParam("recipientName") String recipientName, Model model, Principal principal){
+
+        Recipient recipient = transactionService.findRecipientByName(recipientName);
+        List<Recipient> recipientList = transactionService.findAllRecipientList(principal);
+        model.addAttribute("recipientList",recipientList);
+        model.addAttribute("recipient",recipient);
+        return "recipient";
+    }
+
+    @RequestMapping(value = "/recipient/delete", method = RequestMethod.GET)
+    public String deleteRecipient(@RequestParam("recipientName") String recipientName, Model model, Principal principal){
+
+        transactionService.deleteRecipientByName(recipientName);
+
+        List<Recipient> recipientList = transactionService.findAllRecipientList(principal);
+        Recipient recipient = new Recipient();
+
+
+        return "recipient";
     }
 }

@@ -70,9 +70,7 @@ public class TransactionServiceImpl implements TransactionService{
         savingsTransactionDao.save(savingsTransaction);
     }
 
-    public void betweenAccountsTransfer(String from, String to, String amount, PrimaryAccount primaryAccount, SavingsAccount savingsAccount){
-
-        System.out.println("Transaction "+from+" "+to+" "+amount);
+    public void betweenAccountsTransfer(String from, String to, double amount, PrimaryAccount primaryAccount, SavingsAccount savingsAccount){
 
         if (from.equalsIgnoreCase("Primary") && to.equalsIgnoreCase("Savings")){
             primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
@@ -81,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService{
             savingsAccountDao.save(savingsAccount);
 
             Date date = new Date();
-            PrimaryTransaction primaryTransaction = new PrimaryTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",Double.parseDouble(amount),primaryAccount.getAccountBalance(),primaryAccount);
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",amount,primaryAccount.getAccountBalance(),primaryAccount);
 
             primaryTransactionDao.save(primaryTransaction);
         }
@@ -94,17 +92,19 @@ public class TransactionServiceImpl implements TransactionService{
 
             Date date = new Date();
 
-            SavingsTransaction savingsTransaction = new SavingsTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",Double.parseDouble(amount),primaryAccount.getAccountBalance(),savingsAccount);
+            SavingsTransaction savingsTransaction = new SavingsTransaction(date,"Between Accounts Transferd from "+from+" To "+to, "Transfer","Completed",amount,primaryAccount.getAccountBalance(),savingsAccount);
 
             savingsTransactionDao.save(savingsTransaction);
         }
         else {
             try {
-                throw new Exception("Invalid Transaction");
+                throw new Exception("error");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+
     }
 
 }
