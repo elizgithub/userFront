@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.jnlp.UnavailableServiceException;
 import java.awt.event.MouseEvent;
 import java.rmi.MarshalledObject;
 import java.security.Principal;
@@ -40,7 +39,7 @@ public class TransferController {
     @RequestMapping(value = "/betweenAccounts",method = RequestMethod.POST)
     public String betweenAccountsPost(
             @ModelAttribute("transferFrom") String transferFrom,//from the html to the attributes
-            @ModelAttribute("tansferTo") String transferTo,
+            @ModelAttribute("transferTo") String transferTo,
             @ModelAttribute("amount") String amount,
             Principal principal
             )throws Exception{
@@ -49,6 +48,7 @@ public class TransferController {
         PrimaryAccount primaryAccount = user.getPrimaryAccount();
         SavingsAccount savingsAccount = user.getSavingsAccount();
 
+        System.out.println("Transfer "+transferFrom+" "+transferTo+" "+amount);
         transactionService.betweenAccountsTransfer(transferFrom,transferTo,amount,primaryAccount,savingsAccount);
 
         return "redirect:/userFront";
