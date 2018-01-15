@@ -13,22 +13,22 @@
                 <div class="form-group">
                     <label for="recipientName">Name</label>
                     <input type="text" class="form-control" th:value="${recipient.name}" name="name"
-                           id="recipientName" placeholder="Name"/>
+                           id="recipientName" placeholder="Name" required="required"/>
                 </div>
                 <div class="form-group">
                     <label for="recipientEmail">Email</label>
                     <input type="email" class="form-control" th:value="${recipient.email}" name="email"
-                           id="recipientEmail" placeholder="Email"/>
+                           id="recipientEmail" placeholder="Email" required="required"/>
                 </div>
                 <div class="form-group">
                     <label for="recipientPhone">Phone</label>
                     <input type="text" class="form-control" th:value="${recipient.phone}" name="phone"
-                           id="recipientPhone" placeholder="Phone"/>
+                           id="recipientPhone" placeholder="Phone" required="required"/>
                 </div>
                 <div class="form-group">
                     <label for="recipientAccountNumber">Account Number</label>
                     <input type="text" class="form-control" th:value="${recipient.accountNumber}"
-                           name="accountNumber" id="recipientAccountNumber" placeholder="Account Number"/>
+                           name="accountNumber" id="recipientAccountNumber" placeholder="Account Number" required="required"/>
                 </div>
                 <div class="form-group">
                     <label for="recipientDescription">Description</label>

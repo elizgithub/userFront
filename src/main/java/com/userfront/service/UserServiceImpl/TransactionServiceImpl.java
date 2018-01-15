@@ -1,9 +1,6 @@
 package com.userfront.service.UserServiceImpl;
 
-import com.userfront.dao.PrimaryAccountDao;
-import com.userfront.dao.PrimaryTransactionDao;
-import com.userfront.dao.SavingsAccountDao;
-import com.userfront.dao.SavingsTransactionDao;
+import com.userfront.dao.*;
 import com.userfront.model.*;
 import com.userfront.service.TransactionService;
 import com.userfront.service.UserService;
@@ -11,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService{
@@ -32,6 +32,8 @@ public class TransactionServiceImpl implements TransactionService{
     @Autowired
     private SavingsAccountDao savingsAccountDao;
 
+    @Autowired
+    private RecipientDao recipientDao;
     public List<PrimaryTransaction> findPrimaryTransactionList(String username){
 
         User user = userService.findByUsername(username);
@@ -107,5 +109,26 @@ public class TransactionServiceImpl implements TransactionService{
 
     }
 
+
+    public List<Recipient> findAllRecipientList(Principal principal){
+        String Username = principal.getName();
+        List<Recipient> recipientList = recipientDao.findAll().stream() //convert list to stream
+                .filter(recipient -> Username.equals(recipient.getUser().getUsername())) //then only filters out recipients from DB which are binded to the princpial user
+                    .collect(Collectors.toList());//then adds the filtered recipient to list;
+        return recipientList;
+    }
+
+    public Recipient saveRecipient(Recipient recipient){
+        return recipientDao.save(recipient);
+    }
+
+    @Override
+    public Recipient findRecipientByName(String name) {
+        return recipientDao.findByName(name);
+    }
+
+    public void deleteRecipientByName(String recipientName){
+        recipientDao.deleteByName(recipientName);
+    }
 }
 
