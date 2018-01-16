@@ -7,6 +7,7 @@ import com.userfront.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.Date;
@@ -129,6 +130,26 @@ public class TransactionServiceImpl implements TransactionService{
 
     public void deleteRecipientByName(String recipientName){
         recipientDao.deleteByName(recipientName);
+    }
+
+
+    public void toSomeoneElseTransfer(Recipient recipient,String accountType,String amount,PrimaryAccount primaryAccount,SavingsAccount savingsAccount){
+
+        if(accountType.equalsIgnoreCase("Primary")) {
+            primaryAccount.setAccountBalance(primaryAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            primaryAccountDao.save(primaryAccount);
+            Date date = new Date();
+            PrimaryTransaction primaryTransaction = new PrimaryTransaction(date,"Account Transfered to Recipient "+recipient.getName(), " Transfer","Completed",Double.parseDouble(amount),primaryAccount.getAccountBalance(),primaryAccount);
+            primaryTransactionDao.save(primaryTransaction);
+        }
+        else if(accountType.equalsIgnoreCase("Savings")){
+            savingsAccount.setAccountBalance(savingsAccount.getAccountBalance().subtract(new BigDecimal(amount)));
+            savingsAccountDao.save(savingsAccount);
+            Date date = new Date();
+            SavingsTransaction savingsTransaction = new SavingsTransaction(date,"Account Transfered to Recipient "+recipient.getName(), " Transfer","Completed",Double.parseDouble(amount),savingsAccount.getAccountBalance(),savingsAccount);
+            savingsTransactionDao.save(savingsTransaction);
+        }
+
     }
 }
 

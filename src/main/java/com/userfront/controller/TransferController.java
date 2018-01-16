@@ -123,6 +123,6 @@ public class TransferController {
 
         transactionService.toSomeoneElseTransfer(recipient,accountType,amount,user.getPrimaryAccount(),user.getSavingsAccount());
 
-        return "toSomeOne";
+        return "toSomeone";
     }
 }
