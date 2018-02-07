@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserService{
         }
 
         else {
-            String encryptedPasswird = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encryptedPasswird);//set encrypted password
+            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptedPassword);//set encrypted password
 
 
             for (UserRole ur : userRoles) {
